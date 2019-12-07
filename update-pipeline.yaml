@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: nextcloud
+  annotations:
+    description: "Nextcloud - A safe home for all your data"
+    tags: "fileshare,nextcloud"
+    iconClass: fa-cloud-upload
+    template.openshift.io/provider-display-name: "jngrb"
+    template.openshift.io/documentation-url: "https://github.com/jngrb/nextcloud-openshift/blob/changed_github_references/README.md"
+    template.openshift.io/support-url: "https://github.com/jngrb/nextcloud-openshift/issues"
+parameters:
+- name: NEXTCLOUD_HOST
+  description: Application URL of Nextcloud (Route/host)
+  required: true
+- name: JENKINSFILE_REPO
+  description: Jenkins source repository
+  value: https://github.com/jngrb/nextcloud-openshift.git
+- name: GIT_BRANCH
+  description: branch in source repository
+  value: changed_github_references
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+    name: update-pipeline
+  name: update-pipeline
+  spec:
+    source:
+      type: Git
+      git:
+        uri: "${JENKINSFILE_REPO}"
+        ref: "${GIT_BRANCH}"
+    strategy:
+      type: JenkinsPipeline
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: Jenkinsfile
+        env:
+          - name: NEXTCLOUD_HOST
+            value: "${NEXTCLOUD_HOST}"

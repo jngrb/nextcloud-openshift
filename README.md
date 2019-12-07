@@ -23,7 +23,7 @@ oc -n openshift process mariadb-persistent -p MYSQL_DATABASE=nextcloud | oc -n $
 ### 2 Deploy Nextcloud
 
 ```
-oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master/nextcloud.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc -n $PROJECT create -f -
+oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/changed_github_references/nextcloud.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc -n $PROJECT create -f -
 ```
 
 #### Template parameters
@@ -31,7 +31,7 @@ oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master
 Execute the following command to get the available parameters:
 
 ```
-oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master/nextcloud.yaml --parameters
+oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/changed_github_references/nextcloud.yaml --parameters
 ```
 
 ### 3 Configure Nextcloud
@@ -52,7 +52,7 @@ oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master
 You can use the provided DB dump `CronJob` template:
 
 ```
-oc process -f https://raw.githubusercontent.com/tobru/nextcloud-openshift/master/mariadb-backup.yaml | oc -n MYNAMESPACE create -f -
+oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/changed_github_references/mariadb-backup.yaml | oc -n MYNAMESPACE create -f -
 ```
 
 This script dumps the DB to the same PV as the database stores it's data.
@@ -86,7 +86,7 @@ oc exec NEXTCLOUDPOD -c nextcloud -ti php occ
 
 Very welcome!
 
-1. Fork it (https://github.com/tobru/nextcloud-openshift/fork)
+1. Fork it (https://github.com/jngrb/nextcloud-openshift/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
