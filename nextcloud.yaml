@@ -27,7 +27,7 @@ parameters:
   value: changed_github_references
 - name: PVC_SIZE
   description: PVC size for Apps, Config and Data
-  value: 5Gi
+  value: 90Gi
 objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -39,6 +39,7 @@ objects:
     resources:
       requests:
         storage: ${PVC_SIZE}
+    storageClassName: glusterfs-storage
 - apiVersion: v1
   kind: ImageStream
   metadata:
