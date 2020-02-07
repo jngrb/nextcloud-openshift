@@ -27,7 +27,7 @@ parameters:
   value: changed_github_references
 - name: PVC_SIZE
   description: PVC size for Apps, Config and Data
-  value: 90Gi
+  value: 20Gi
 objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
