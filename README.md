@@ -89,9 +89,9 @@ These components are licenced under AGPL-3.0 with their copyright belonging to t
 
 References:
 
-* <https://www.onlyoffice.com/de/download.aspx>
-* <https://github.com/ONLYOFFICE/Docker-DocumentServer>
-* <https://hub.docker.com/r/onlyoffice/documentserver/>
+* <https://nextcloud.com/install/#instructions-server>
+* <https://github.com/nextcloud/docker>
+* <https://hub.docker.com/_/nextcloud/>
 * <http://www.gnu.org/licenses/agpl-3.0.html>
 
 ## License for the OpenShift template
