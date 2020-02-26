@@ -25,6 +25,12 @@ parameters:
 - name: GIT_BRANCH
   description: branch in source repository
   value: changed_github_references
+- name: MYSQL_HOST
+  description: Host of the mysql/mariadb service
+  value: mariadb.nextcloud.svc
+- name: REDIS_HOST
+  description: Host of the redis service
+  value: redis.nextcloud.svc
 - name: PVC_SIZE
   description: PVC size for Apps, Config and Data
   value: 20Gi
@@ -135,20 +141,27 @@ objects:
       spec:
         containers:
         - env:
-          - name: NC_dbhost
-            value: mariadb
-          - name: NC_dbuser
+          - name: MYSQL_USER
             valueFrom:
               secretKeyRef:
                 key: database-user
                 name: mariadb
-          - name: NC_dbpassword
+          - name: MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-password
                 name: mariadb
-          - name: NC_dbname
+          - name: MYSQL_DATABASE
             value: nextcloud
+          - name: MYSQL_HOST
+            value: ${MYSQL_HOST}
+          - name: REDIS_HOST
+            value: ${REDIS_HOST}
+          - name: REDIS_HOST_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name: redis
           image: nextcloud
           imagePullPolicy: Always
           livenessProbe:
@@ -299,20 +312,27 @@ objects:
               env:
               - name: NEXTCLOUD_UPDATE
                 value: "1"
-              - name: NC_dbhost
-                value: mariadb
-              - name: NC_dbuser
+              - name: MYSQL_USER
                 valueFrom:
                   secretKeyRef:
                     key: database-user
                     name: mariadb
-              - name: NC_dbpassword
+              - name: MYSQL_PASSWORD
                 valueFrom:
                   secretKeyRef:
                     key: database-password
                     name: mariadb
-              - name: NC_dbname
+              - name: MYSQL_DATABASE
                 value: nextcloud
+              - name: MYSQL_HOST
+                value: ${MYSQL_HOST}
+              - name: REDIS_HOST
+                value: ${REDIS_HOST}
+              - name: REDIS_HOST_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: database-password
+                    name: redis
               image: nextcloud:${NEXTCLOUD_IMAGE_TAG}
               imagePullPolicy: Always
               name: nextcloud-cron

@@ -8,20 +8,26 @@ This repository contains an OpenShift 3 template to easily deploy Nextcloud on O
 
 Create an OpenShift project if not already provided by the service
 
-```
+```[bash]
 PROJECT=nextcloud
 oc new-project $PROJECT
 ```
 
-### 1 Deploy Database
+### 1a Deploy Database
 
-```
+```[bash]
 oc -n openshift process mariadb-persistent -p MYSQL_DATABASE=nextcloud | oc -n $PROJECT create -f -
+```
+
+### 1b Deploy Redis database
+
+```[bash]
+oc -n openshift process redis-ephemeral | oc -n $PROJECT create -f -
 ```
 
 ### 2 Deploy Nextcloud
 
-```
+```[bash]
 oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc -n $PROJECT create -f -
 ```
 
@@ -29,18 +35,16 @@ oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master
 
 Execute the following command to get the available parameters:
 
-```
+```[bash]
 oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud.yaml --parameters
 ```
 
 ### 3 Configure Nextcloud
 
-* Navigate to http://nextcloud.example.com
-* Fill in the form and finish the installation. The DB credentials can be 
-  found in the secret `mariadb`. In the Webconsole it can be found under
-  `Resources -> Secrets -> mariadb -> Reveal Secret`
+* Navigate to <http://nextcloud.example.com>
+* Fill in the form and finish the installation. The DB credentials can be found in the secret `mariadb`. In the Webconsole it can be found under `Resources -> Secrets -> mariadb -> Reveal Secret`
 
-**Hints**
+#### Hints
 
 * You might want to enable TLS for your instance
 
@@ -50,7 +54,7 @@ oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master
 
 You can use the provided DB dump `CronJob` template:
 
-```
+```[bash]
 oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/mariadb-backup.yaml | oc -n MYNAMESPACE create -f -
 ```
 
@@ -59,9 +63,7 @@ You must make sure that you copy these files away to a real backup location.
 
 ### Files
 
-To backup files, a simple solution would be to run f.e. [restic](http://restic.readthedocs.io/) in a Pod
-as a `CronJob` and mount the PVCs as volumes. Then use an S3 endpoint for restic
-to backup data to.
+To backup files, a simple solution would be to run f.e. [restic](http://restic.readthedocs.io/) in a Pod as a `CronJob` and mount the PVCs as volumes. Then use an S3 endpoint for restic to backup data to.
 
 ## Notes
 
@@ -70,7 +72,7 @@ to backup data to.
 
 To use the `occ` CLI, you can use `oc exec`:
 
-```
+```[bash]
 oc get pods
 oc exec NEXTCLOUDPOD -c nextcloud -ti php occ
 ```
@@ -79,6 +81,7 @@ oc exec NEXTCLOUDPOD -c nextcloud -ti php occ
 
 * Use sclorg Nginx instead of Alpine Nginx for better OpenShift compatibility
 * Autoconfigure Nextcloud using `autoconfig.php`
+* Finalize maintenance and upgrade jobs
 * Provide restic Backup example
 
 ## Dependency on Nextcloud Community Edition
@@ -143,7 +146,7 @@ This template is based on work originally published to <https://github.com/tobru
 
 Very welcome!
 
-1. Fork it (https://github.com/jngrb/nextcloud-openshift/fork)
+1. Fork it (<https://github.com/jngrb/nextcloud-openshift/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
