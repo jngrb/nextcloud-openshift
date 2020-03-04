@@ -139,6 +139,8 @@ objects:
           app: nextcloud
           deploymentconfig: nextcloud
       spec:
+        nodeSelector:
+          appclass: main
         containers:
         - env:
           - name: MYSQL_USER
@@ -166,7 +168,7 @@ objects:
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
-            initialDelaySeconds: 1
+            initialDelaySeconds: 15
             periodSeconds: 10
             successThreshold: 1
             tcpSocket:
@@ -178,7 +180,7 @@ objects:
             protocol: TCP
           readinessProbe:
             failureThreshold: 3
-            initialDelaySeconds: 1
+            initialDelaySeconds: 15
             periodSeconds: 10
             successThreshold: 1
             tcpSocket:

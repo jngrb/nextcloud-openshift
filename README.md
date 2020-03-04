@@ -25,6 +25,8 @@ oc -n openshift process mariadb-persistent -p MYSQL_DATABASE=nextcloud | oc -n $
 oc -n openshift process redis-ephemeral | oc -n $PROJECT create -f -
 ```
 
+If the Nextcloud pod is to be deployed only on selected nodes, apply the node selector also to the Redis deployment (here, we use the node selector 'appclass=main').
+
 ### 2 Deploy Nextcloud
 
 ```[bash]
