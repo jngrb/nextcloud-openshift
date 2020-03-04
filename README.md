@@ -48,7 +48,8 @@ oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master
 
 #### Hints
 
-* You might want to enable TLS for your instance
+* Change the config to include 'localhost' as a trusted proxy: `'trusted_proxies' => ['127.0.0.1', '::1'],`.
+* You might want to enable TLS for your instance.
 * Make sure that the caching configuration is as follows (see <https://docs.nextcloud.com/server/17/admin_manual/configuration_server/caching_configuration.html> for reference):
 
 ```[php]
