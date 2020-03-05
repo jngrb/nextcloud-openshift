@@ -28,7 +28,7 @@ pipeline {
                             def templateName = 'nextcloud'
                             /*def rm = openshift.selector("dc", templateName)
                               .rollout().latest()*/
-                            timeout(15) {
+                            timeout(10) {
                                 openshift.selector("dc", templateName)
                                   .related('pods').untilEach(1) {
                                     return (it.object().status.phase == "Running")

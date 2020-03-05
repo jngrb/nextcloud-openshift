@@ -24,7 +24,7 @@ pipeline {
                               '-p', "NEXTCLOUD_IMAGE_TAG=${env.OLD_NEXTCLOUD_IMAGE_TAG}",
                               '-p', "ON_OFF=on")
                             def jobs = openshift.create(config)
-                            timeout(60) {
+                            timeout(5) {
                                 jobs.untilEach(1) {
                                     return (it.object().status.phase == "Completed")
                                 }
@@ -43,8 +43,8 @@ pipeline {
                             def config = openshift.process(template,
                               '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                             def objects = openshift.apply(config)
-                            timeout(180) {
-                                objects.realted('job').untilEach(1) {
+                            timeout(20) {
+                                objects.related('job').untilEach(1) {
                                     return (it.object().status.phase == "Completed")
                                 }
                             }
@@ -67,7 +67,7 @@ pipeline {
                             def templateName = 'nextcloud'
                             /*def rm = openshift.selector("dc", templateName)
                               .rollout().latest()*/
-                            timeout(15) {
+                            timeout(5) {
                                 openshift.selector("dc", templateName)
                                   .related('pods').untilEach(1) {
                                     return (it.object().status.phase == "Running")
@@ -88,7 +88,7 @@ pipeline {
                               '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}",
                               '-p', "ON_OFF=off")
                             def jobs = openshift.create(config)
-                            timeout(60) {
+                            timeout(10) {
                                 jobs.untilEach(1) {
                                     return (it.object().status.phase == "Completed")
                                 }
