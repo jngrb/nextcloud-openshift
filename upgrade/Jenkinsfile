@@ -43,14 +43,14 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
                             def imageTemplate = readFile 'upgrade/nextcloud-image.yaml'
-                            def config = openshift.process(imageTemplate,
+                            def imageConfig = openshift.process(imageTemplate,
                               '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
-                            openshift.apply(config)
+                            openshift.apply(imageConfig)
 
                             def upgradeTemplate = readFile 'upgrade/nextcloud-upgrade.yaml'
-                            def config = openshift.process(upgradeTemplate,
+                            def upgradeConfig = openshift.process(upgradeTemplate,
                               '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
-                            def objects = openshift.create(config)
+                            def objects = openshift.create(upgradeConfig)
                             timeout(20) {
                                 objects.narrow('job').untilEach(1) {
                                     return (it.object().status.succeeded == 1)
