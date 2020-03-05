@@ -19,6 +19,9 @@ parameters:
 - name: GIT_BRANCH
   description: branch in source repository
   value: master
+- name: NEXTCLOUD_IMAGE_TAG
+  description: Tag of the Nextcloud Docker Image to deploy
+  value: 16-fpm
 objects:
 - apiVersion: v1
   kind: BuildConfig
@@ -39,3 +42,5 @@ objects:
         env:
           - name: NEXTCLOUD_HOST
             value: "${NEXTCLOUD_HOST}"
+          - name: NEXTCLOUD_IMAGE_TAG
+            value: "${NEXTCLOUD_IMAGE_TAG}"

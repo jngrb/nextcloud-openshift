@@ -38,7 +38,7 @@ objects:
     strategy:
       type: JenkinsPipeline
       jenkinsPipelineStrategy:
-        jenkinsfilePath: Jenkinsfile
+        jenkinsfilePath: upgrade/Jenkinsfile
         env:
           - name: NEXTCLOUD_HOST
             value: "${NEXTCLOUD_HOST}"

@@ -46,7 +46,8 @@ spec:
 ### 2 Deploy Nextcloud
 
 ```[bash]
-oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc -n $PROJECT create -f -
+NEXTCLOUD_HOST=nextcloud.example.com
+oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST | oc -n $PROJECT create -f -
 ```
 
 #### Template parameters
@@ -59,7 +60,7 @@ oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master
 
 ### 3 Configure Nextcloud
 
-* Navigate to <http://nextcloud.example.com>
+* Navigate to `$NEXTCLOUD_HOST`, here <http://nextcloud.example.com>
 * Fill in the form and finish the installation. The DB credentials can be found in the secret `mariadb`. In the Webconsole it can be found under `Resources -> Secrets -> mariadb -> Reveal Secret`
 
 #### Hints
@@ -86,7 +87,7 @@ oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master
 You can use the provided DB dump `CronJob` template:
 
 ```[bash]
-oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/mariadb-backup.yaml | oc -n MYNAMESPACE create -f -
+oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/mariadb-backup.yaml | oc -n PROJECT create -f -
 ```
 
 This script dumps the DB to the same PV as the database stores it's data.
@@ -153,7 +154,8 @@ In order to upgrade the Nextcloud image and run the upgrade script automatically
 
 ```[bash]
 #oc project $PROJECT # assumed to still be set
-oc process -f upgrade/upgrade-pipeline.yaml -p NEXTCLOUD_HOST=nextcloud.example.com -p NEXTCLOUD_IMAGE_TAG=17-fpm | oc apply -f -
+oc process -f upgrade/upgrade-pipeline.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST -p NEXTCLOUD_IMAGE_TAG=17-fpm | oc apply -f -
+oc start-build image-upgrade-pipeline
 ```
 
 This pipeline will first set the maintenance mode, then upgrade everything, and finally unset the maintenance mode.

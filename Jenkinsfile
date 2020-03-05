@@ -23,6 +23,16 @@ pipeline {
                             def config = openshift.process(template,
                               '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}")
                             openshift.apply(config)
+
+                            def templateName = 'nextcloud'
+                            def rm = openshift.selector("dc", templateName)
+                              .rollout().latest()
+                            timeout(15) {
+                                openshift.selector("dc", templateName)
+                                  .related('pods').untilEach(1) {
+                                    return (it.object().status.phase == "Running")
+                                }
+                            }
                         }
                     }
                 }
