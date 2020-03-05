@@ -14,7 +14,7 @@ pipeline {
                     userRemoteConfigs: [[url: "${env.GIT_URL}"]]]
             }
         }
-        stage('Set maintenance mode off') {
+        stage('Set maintenance mode off (old image)') {
             /* Set the maintenance mode to off with the old image;
              * otherwise the upgrade will not start. */
             steps {
@@ -91,7 +91,7 @@ pipeline {
                 }
             }
         }
-        stage('Set maintenance mode off') {
+        stage('Set maintenance mode off (new image)') {
             steps {
                 script {
                     openshift.withCluster() {
