@@ -26,8 +26,10 @@ pipeline {
                             def jobs = openshift.create(config)
                             timeout(5) {
                                 jobs.untilEach(1) {
-                                    print it.object().status
-                                    return (it.object().status.phase == "Complete")
+                                    def object = it.object()
+                                    print object.status
+                                    print object.status.phase
+                                    return (object.status.phase == "Complete")
                                 }
                             }
                         }
