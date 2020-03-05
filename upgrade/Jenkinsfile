@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build info') {
+            steps {
+              sh 'env'
+            }
+        }
+        stage('Checkout sources') {
+            steps {
+                checkout changelog: false, poll: false,
+                    scm: [$class: 'GitSCM', branches: [[name: "${env.GIT_BRANCH}"]],
+                    doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
+                    userRemoteConfigs: [[url: "${env.GIT_URL}"]]]
+            }
+        }
+        stage('Set maintenance mode on') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
+                            def template = readFile 'nextcloud-maintenance.yaml'
+                            def config = openshift.process(template,
+                              '-p', "ON_OFF=on")
+                            openshift.create(config)
+                        }
+                    }
+                }
+            }
+        }
+        stage('Run upgrade with new image') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
+                            def template = readFile 'upgrade/nextcloud-upgrade.yaml'
+                            def config = openshift.process(template,
+                              '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
+                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}")
+                            openshift.apply(config)
+                        }
+                    }
+                }
+            }
+        }
+        stage('Set maintenance mode off') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
+                            def template = readFile 'nextcloud-maintenance.yaml'
+                            def config = openshift.process(template,
+                              '-p', "ON_OFF=off")
+                            openshift.create(config)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -3,9 +3,6 @@ kind: Template
 metadata:
   name: nextcloud-maintenace
 parameters:
-- name: NEXTCLOUD_HOST
-  description: Application URL of Nextcloud (Route/host)
-  required: true
 - name: NEXTCLOUD_IMAGE
   description: Image to deploy
   value: docker.io/nextcloud
@@ -19,16 +16,18 @@ objects:
 - apiVersion: batch/v1
   kind: Job
   metadata:
-    name: nextcloud-maintenance
+    generateName: nextcloud-maintenance-${ON_OFF}
   spec:
     concurrencyPolicy: Replace
     activeDeadlineSeconds: 3600
     template:
       metadata:
-       name: nextcloud-maintenance
+       generateName: nextcloud-maintenance-${ON_OFF}
       spec:
+        nodeSelector:
+          appclass: main
         containers:
-        - name: nextcloud-maintenance
+        - name: nextcloud-maintenance-${ON_OFF}
           image: nextcloud:${NEXTCLOUD_IMAGE_TAG}
           imagePullPolicy: Always
           args:

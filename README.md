@@ -129,6 +129,35 @@ oc project $PROJECT
 oc process -f update-pipeline.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc apply -f -
 ```
 
+This pipeline updates the deployment configuration to the newest version from the template as checked in on the master branch on Github.
+
+### Maintenance jobs
+
+To set Nextcloud into maintenance mode, you can run the maintenance Job:
+
+```[bash]
+#oc project $PROJECT # assumed to still be set
+oc process -f nextcloud-maintenance.yaml -p ON_OFF=on | oc create -f -
+```
+
+To disable the maintenance mode, run the 'opposite' Job with `ON_OFF=off`.
+
+```[bash]
+#oc project $PROJECT # assumed to still be set
+oc process -f nextcloud-maintenance.yaml -p ON_OFF=off | oc create -f -
+```
+
+### Automatic upgrades
+
+In order to upgrade the Nextcloud image and run the upgrade script automatically for the persistent data volume and the database, run the 'image-upgrade' pipeline.
+
+```[bash]
+#oc project $PROJECT # assumed to still be set
+oc process -f upgrade/upgrade-pipeline.yaml -p NEXTCLOUD_HOST=nextcloud.example.com -p NEXTCLOUD_IMAGE_TAG=17-fpm | oc apply -f -
+```
+
+This pipeline will first set the maintenance mode, then upgrade everything, and finally unset the maintenance mode.
+
 ## Ideas / open issues
 
 * Use sclorg Nginx instead of Alpine Nginx for better OpenShift compatibility
