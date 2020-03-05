@@ -154,7 +154,7 @@ In order to upgrade the Nextcloud image and run the upgrade script automatically
 
 ```[bash]
 #oc project $PROJECT # assumed to still be set
-oc process -f upgrade/upgrade-pipeline.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST -p NEXTCLOUD_IMAGE_TAG=17-fpm | oc apply -f -
+oc process -f upgrade/upgrade-pipeline.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST -p OLD_NEXTCLOUD_IMAGE_TAG=16-fpm -p NEW_NEXTCLOUD_IMAGE_TAG=17-fpm | oc apply -f -
 oc start-build image-upgrade-pipeline
 ```
 

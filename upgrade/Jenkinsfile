@@ -21,6 +21,7 @@ pipeline {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
                             def template = readFile 'nextcloud-maintenance.yaml'
                             def config = openshift.process(template,
+                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.OLD_NEXTCLOUD_IMAGE_TAG}",
                               '-p', "ON_OFF=on")
                             def jobs = openshift.create(config)
                             timeout(60) {
@@ -40,8 +41,7 @@ pipeline {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
                             def template = readFile 'upgrade/nextcloud-upgrade.yaml'
                             def config = openshift.process(template,
-                              '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
-                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}")
+                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                             def objects = openshift.apply(config)
                             timeout(180) {
                                 objects.realted('job').untilEach(1) {
@@ -61,7 +61,7 @@ pipeline {
                             def template = readFile 'nextcloud.yaml'
                             def config = openshift.process(template,
                               '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
-                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}")
+                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                             openshift.apply(config)
 
                             def templateName = 'nextcloud'
@@ -85,6 +85,7 @@ pipeline {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
                             def template = readFile 'nextcloud-maintenance.yaml'
                             def config = openshift.process(template,
+                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}",
                               '-p', "ON_OFF=off")
                             def jobs = openshift.create(config)
                             timeout(60) {

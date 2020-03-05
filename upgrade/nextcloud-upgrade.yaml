@@ -3,9 +3,6 @@ kind: Template
 metadata:
   name: nextcloud-upgrade
 parameters:
-- name: NEXTCLOUD_HOST
-  description: Application URL of Nextcloud (Route/host)
-  required: true
 - name: NEXTCLOUD_IMAGE
   description: Image to deploy
   value: docker.io/nextcloud
