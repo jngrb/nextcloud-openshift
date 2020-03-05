@@ -28,8 +28,8 @@ pipeline {
                                 jobs.untilEach(1) {
                                     def object = it.object()
                                     print object.status
-                                    print object.status.phase
-                                    return (object.status.phase == "Complete")
+                                    print object.status.succeeded
+                                    return (object.status.succeeded == 1)
                                 }
                             }
                         }
@@ -48,7 +48,7 @@ pipeline {
                             def objects = openshift.apply(config)
                             timeout(20) {
                                 objects.related('job').untilEach(1) {
-                                    return (it.object().status.phase == "Complete")
+                                    return (it.object().status.succeeded == 1)
                                 }
                             }
                         }
@@ -93,7 +93,7 @@ pipeline {
                             def jobs = openshift.create(config)
                             timeout(10) {
                                 jobs.untilEach(1) {
-                                    return (it.object().status.phase == "Complete")
+                                    return (it.object().status.succeeded == 1)
                                 }
                             }
                         }
