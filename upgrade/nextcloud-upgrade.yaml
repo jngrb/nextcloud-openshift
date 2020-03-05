@@ -10,24 +10,6 @@ parameters:
   description: Tag of the Nextcloud Docker Image to deploy
   value: 16-fpm
 objects:
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    labels:
-      app: nextcloud
-    name: nextcloud
-  spec:
-    tags:
-    - annotations:
-        openshift.io/imported-from: ${NEXTCLOUD_IMAGE}:${NEXTCLOUD_IMAGE_TAG}
-      from:
-        kind: DockerImage
-        name: ${NEXTCLOUD_IMAGE}:${NEXTCLOUD_IMAGE_TAG}
-      importPolicy:
-        scheduled: true
-      name: ${NEXTCLOUD_IMAGE_TAG}
-      referencePolicy:
-        type: Source
 - apiVersion: batch/v1
   kind: Job
   metadata:
