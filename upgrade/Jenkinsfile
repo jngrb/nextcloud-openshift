@@ -47,7 +47,7 @@ pipeline {
                               '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                             def objects = openshift.apply(config)
                             timeout(20) {
-                                objects.related('job').untilEach(1) {
+                                objects.narrow('job').untilEach(1) {
                                     return (it.object().status.succeeded == 1)
                                 }
                             }
