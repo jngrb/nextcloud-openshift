@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: nextcloud-db-task
+parameters:
+- name: NEXTCLOUD_IMAGE
+  description: Image to deploy
+  value: docker.io/nextcloud
+- name: NEXTCLOUD_IMAGE_TAG
+  description: Tag of the Nextcloud Docker Image to deploy
+  value: 16-fpm
+- name: DB_TASK
+  description: Task to be performed
+  value: "add-missing-indices"
+objects:
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    generateName: nextcloud-db-task-${DB_TASK}-
+  spec:
+    concurrencyPolicy: Replace
+    activeDeadlineSeconds: 3600
+    template:
+      metadata:
+       generateName: nextcloud-db-task-${DB_TASK}-
+      spec:
+        nodeSelector:
+          appclass: main
+        containers:
+        - name: nextcloud-db-task-${DB_TASK}
+          image: nextcloud:${NEXTCLOUD_IMAGE_TAG}
+          imagePullPolicy: Always
+          args:
+          - /var/www/html/occ
+          - db:${DB_TASK}
+          env:
+          - name: NEXTCLOUD_UPDATE
+            value: "1"
+          - name: NC_dbhost
+            value: mariadb
+          - name: NC_dbuser
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name: mariadb
+          - name: NC_dbpassword
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name: mariadb
+          - name: NC_dbname
+            value: nextcloud
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/www/html
+            name: nextcloud-source
+          - mountPath: /var/www/html/data
+            name: nextcloud-data
+            subPath: data
+          - mountPath: /var/www/html/config
+            name: nextcloud-data
+            subPath: config
+          - mountPath: /var/www/html/custom_apps
+            name: nextcloud-data
+            subPath: apps
+        dnsPolicy: ClusterFirst
+        restartPolicy: Never
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: nextcloud-source
+        - name: nextcloud-data
+          persistentVolumeClaim:
+            claimName: nextcloud-data
