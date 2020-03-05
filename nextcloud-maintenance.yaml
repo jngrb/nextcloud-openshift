@@ -16,13 +16,13 @@ objects:
 - apiVersion: batch/v1
   kind: Job
   metadata:
-    generateName: nextcloud-maintenance-${ON_OFF}
+    generateName: nextcloud-maintenance-${ON_OFF}-
   spec:
     concurrencyPolicy: Replace
     activeDeadlineSeconds: 3600
     template:
       metadata:
-       generateName: nextcloud-maintenance-${ON_OFF}
+       generateName: nextcloud-maintenance-${ON_OFF}-
       spec:
         nodeSelector:
           appclass: main

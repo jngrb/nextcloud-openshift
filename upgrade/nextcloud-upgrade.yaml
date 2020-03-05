@@ -31,13 +31,13 @@ objects:
 - apiVersion: batch/v1
   kind: Job
   metadata:
-    name: "nextcloud-upgrade-${NEXTCLOUD_IMAGE_TAG}"
+    generateName: "nextcloud-upgrade-${NEXTCLOUD_IMAGE_TAG}-"
   spec:
     concurrencyPolicy: Replace
     activeDeadlineSeconds: 3600
     template:
       metadata:
-       name: nextcloud-upgrade
+       generateName: "nextcloud-upgrade-${NEXTCLOUD_IMAGE_TAG}-"
       spec:
         containers:
         - name: nextcloud-upgrade
