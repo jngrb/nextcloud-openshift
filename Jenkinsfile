@@ -21,7 +21,8 @@ pipeline {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
                             def template = readFile 'nextcloud.yaml'
                             def config = openshift.process(template,
-                              '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}")
+                              '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
+                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}")
                             openshift.apply(config)
 
                             def templateName = 'nextcloud'

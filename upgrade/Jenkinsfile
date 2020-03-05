@@ -22,7 +22,12 @@ pipeline {
                             def template = readFile 'nextcloud-maintenance.yaml'
                             def config = openshift.process(template,
                               '-p', "ON_OFF=on")
-                            openshift.create(config)
+                            def jobs = openshift.create(config)
+                            timeout(60) {
+                                jobs.untilEach(1) {
+                                    return (it.object().status.phase == "Completed")
+                                }
+                            }
                         }
                     }
                 }
@@ -37,7 +42,37 @@ pipeline {
                             def config = openshift.process(template,
                               '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
                               '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}")
+                            def objects = openshift.apply(config)
+                            timeout(180) {
+                                objects.realted('job').untilEach(1) {
+                                    return (it.object().status.phase == "Completed")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('Apply new image to deployment configuration') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
+                            def template = readFile 'nextcloud.yaml'
+                            def config = openshift.process(template,
+                              '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
+                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}")
                             openshift.apply(config)
+
+                            def templateName = 'nextcloud'
+                            /*def rm = openshift.selector("dc", templateName)
+                              .rollout().latest()*/
+                            timeout(15) {
+                                openshift.selector("dc", templateName)
+                                  .related('pods').untilEach(1) {
+                                    return (it.object().status.phase == "Running")
+                                }
+                            }
                         }
                     }
                 }
@@ -51,7 +86,12 @@ pipeline {
                             def template = readFile 'nextcloud-maintenance.yaml'
                             def config = openshift.process(template,
                               '-p', "ON_OFF=off")
-                            openshift.create(config)
+                            def jobs = openshift.create(config)
+                            timeout(60) {
+                                jobs.untilEach(1) {
+                                    return (it.object().status.phase == "Completed")
+                                }
+                            }
                         }
                     }
                 }
