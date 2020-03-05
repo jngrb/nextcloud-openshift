@@ -7,7 +7,7 @@ metadata:
     tags: "fileshare,nextcloud"
     iconClass: fa-cloud-upload
     template.openshift.io/provider-display-name: "jngrb"
-    template.openshift.io/documentation-url: "https://github.com/jngrb/nextcloud-openshift/blob/changed_github_references/README.md"
+    template.openshift.io/documentation-url: "https://github.com/jngrb/nextcloud-openshift/blob/master/README.md"
     template.openshift.io/support-url: "https://github.com/jngrb/nextcloud-openshift/issues"
 parameters:
 - name: NEXTCLOUD_HOST
@@ -24,7 +24,7 @@ parameters:
   value: https://github.com/jngrb/nextcloud-openshift.git
 - name: GIT_BRANCH
   description: branch in source repository
-  value: changed_github_references
+  value: master
 - name: MYSQL_HOST
   description: Host of the mysql/mariadb service
   value: mariadb.nextcloud.svc
@@ -274,7 +274,7 @@ objects:
   spec:
     ports:
     - name: 8080-tcp
-      port: 8080
+      port: 80
       protocol: TCP
       targetPort: 8080
     selector:

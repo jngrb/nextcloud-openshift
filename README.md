@@ -25,7 +25,23 @@ oc -n openshift process mariadb-persistent -p MYSQL_DATABASE=nextcloud | oc -n $
 oc -n openshift process redis-ephemeral | oc -n $PROJECT create -f -
 ```
 
-If the Nextcloud pod is to be deployed only on selected nodes, apply the node selector also to the Redis deployment (here, we use the node selector 'appclass=main').
+If the Nextcloud pod is to be deployed only on selected nodes, apply the node selector also to the Redis deployment (here, we use the node selector 'appclass=main'). To do so, you can edit the deployment configuration YAML as follows.
+
+```[yaml]
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  [...]
+spec:
+  [...]
+  template:
+    metadata:
+      [...]
+    spec:
+      nodeSelector:
+        appclass: main
+      [...]
+```
 
 ### 2 Deploy Nextcloud
 
@@ -90,6 +106,27 @@ To use the `occ` CLI, you can use `oc exec`:
 ```[bash]
 oc get pods
 oc exec NEXTCLOUDPOD -c nextcloud -ti php occ
+```
+
+## Automatic update and upgrade deployments
+
+### Jenkins pipeline
+
+We use an (ephemeral) Jenkins for automatic deployments of configuration updates and image upgrades. First, deploy the Jekins POD:
+
+```[bash]
+oc -n openshift process jenkins-ephemeral | oc -n $PROJECT create -f -
+```
+
+As as the main PODs, you might want to deploy the Jenkins container only on selected nodes. (E.g., you can the same node selector, 'appclass=main'.)
+
+Note, Jenkins might take a long time to deploy.
+
+After having logged into Jenkins for the first time, you can roll out the JenkinsPipeline build configuration:
+
+```[bash]
+oc project $PROJECT
+oc process -f update-pipeline.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc apply -f -
 ```
 
 ## Ideas / open issues
