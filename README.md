@@ -156,7 +156,7 @@ Note that just upgrading the image for the regular deployment cannot be recommen
 
 ```[bash]
 #oc project $PROJECT # assumed to still be set
-oc process -f upgrade/upgrade-pipeline.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST -p OLD_NEXTCLOUD_IMAGE_TAG=16-fpm -p NEW_NEXTCLOUD_IMAGE_TAG=17-fpm | oc apply -f -
+oc process -f upgrade/upgrade-pipeline.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST -p OLD_NEXTCLOUD_IMAGE_TAG=17.0.5-fpm -p NEW_NEXTCLOUD_IMAGE_TAG=18.0.4-fpm | oc apply -f -
 oc start-build image-upgrade-pipeline
 ```
 
