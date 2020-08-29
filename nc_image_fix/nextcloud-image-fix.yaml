@@ -15,6 +15,25 @@ parameters:
 - name: GIT_BRANCH
   description: branch in source repository
   value: master
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      build: nextcloud-image
+      app: nextcloud
+    name: nextcloud-fixed
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: nextcloud-fixed:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -22,7 +41,7 @@ parameters:
     labels:
       build: nextcloud-image
       app: nextcloud
-    name: nginx
+    name: nextcloud-image
   spec:
     nodeSelector: null
     output:
@@ -37,6 +56,7 @@ parameters:
         uri: ${NC_FIX_DOCKERFILE_REPO}
         ref: ${GIT_BRANCH}
       type: Git
+      contextDir: "nc_image_fix"
     strategy:
       dockerStrategy:
         from:
