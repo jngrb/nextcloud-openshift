@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: nextcloud-image-fix
+parameters:
+- name: NEXTCLOUD_IMAGE
+  description: Image to deploy
+  value: docker.io/nextcloud
+- name: NEXTCLOUD_IMAGE_TAG
+  description: Tag of the Nextcloud Docker Image to deploy
+  value: 18.0.4-fpm
+- name: NC_FIX_DOCKERFILE_REPO
+  description: Nginx Dockerfile source repository
+  value: https://github.com/jngrb/nextcloud-openshift.git
+- name: GIT_BRANCH
+  description: branch in source repository
+  value: master
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      build: nextcloud-image
+      app: nextcloud
+    name: nginx
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: nextcloud-fixed:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: ${NC_FIX_DOCKERFILE_REPO}
+        ref: ${GIT_BRANCH}
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: ${NEXTCLOUD_IMAGE}:${NEXTCLOUD_IMAGE_TAG}
+      type: Docker
+    triggers:
+    - type: ConfigChange
+  
