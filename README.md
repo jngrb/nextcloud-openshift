@@ -58,6 +58,22 @@ Execute the following command to get the available parameters:
 oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud.yaml --parameters
 ```
 
+#### Redis Cache for Sessions without root privileges
+
+In order to use the redis cache for sessions if the container is run without root privileges, you will need to use a modified Nextcloud image.
+
+Build your modified image with the following build template:
+
+```[bash]
+oc process -f nc_image_fix/nextcloud-image-fix.yaml | oc apply -f -
+```
+
+After the build has finished, change you nextcloud deyploment config to use the fixed image:
+
+```[bash]
+oc patch dc nextcloud --patch='{"spec":{"template":{"spec":{"containers":[{"name": "nextcloud", "image":"nextcloud-fixed:latest"}]}},"triggers":[{"type": "ImageChange","imageChangeParams": {"automatic": true,"containerNames": ["nextcloud"],"from":{"kind": "ImageStreamTag", "name": "nextcloud-fixed:latest", "namespace": "nextcloud"}}},{"type": "ConfigChange"}]}}'
+```
+
 ### 3 Configure Nextcloud
 
 * Navigate to `$NEXTCLOUD_HOST`, here <http://nextcloud.example.com>
