@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: nextcloud
+  annotations:
+    description: "Nextcloud - A safe home for all your data"
+    tags: "fileshare,nextcloud"
+    iconClass: fa-cloud-upload
+    template.openshift.io/provider-display-name: "jngrb"
+    template.openshift.io/documentation-url: "https://github.com/jngrb/nextcloud-openshift/blob/master/README.md"
+    template.openshift.io/support-url: "https://github.com/jngrb/nextcloud-openshift/issues"
+parameters:
+- name: NEXTCLOUD_IMAGE_NAME
+  description: Name of the Nextcloud Docker image to deploy
+  value: nextcloud
+- name: NEXTCLOUD_IMAGE_TAG
+  description: Tag of the Nextcloud Docker image to deploy
+  value: 18.0.4-fpm
+- name: MYSQL_HOST
+  description: Host of the mysql/mariadb service
+  value: mariadb.nextcloud.svc
+- name: REDIS_HOST
+  description: Host of the redis service
+  value: redis.nextcloud.svc
+objects:
+- apiVersion: batch/v1beta1
+  kind: CronJob
+  metadata:
+    name: nextcloud-cron
+  spec:
+    concurrencyPolicy: Replace
+    jobTemplate:
+      spec:
+        activeDeadlineSeconds: 3600
+        template:
+          spec:
+            containers:
+            - args:
+              - php
+              - -f
+              - /var/www/html/cron.php
+              env:
+              - name: NEXTCLOUD_UPDATE
+                value: "1"
+              - name: MYSQL_USER
+                valueFrom:
+                  secretKeyRef:
+                    key: database-user
+                    name: mariadb
+              - name: MYSQL_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: database-password
+                    name: mariadb
+              - name: MYSQL_DATABASE
+                value: nextcloud
+              - name: MYSQL_HOST
+                value: ${MYSQL_HOST}
+              - name: REDIS_HOST
+                value: ${REDIS_HOST}
+              - name: REDIS_HOST_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: database-password
+                    name: redis
+              image: ${NEXTCLOUD_IMAGESTREAM_NAME}:${NEXTCLOUD_IMAGE_TAG}
+              imagePullPolicy: Always
+              name: nextcloud-cron
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              volumeMounts:
+              - mountPath: /var/www/html
+                name: nextcloud-source
+              - mountPath: /var/www/html/data
+                name: nextcloud-data
+                subPath: data
+              - mountPath: /var/www/html/config
+                name: nextcloud-data
+                subPath: config
+              - mountPath: /var/www/html/custom_apps
+                name: nextcloud-data
+                subPath: apps
+            dnsPolicy: ClusterFirst
+            restartPolicy: Never
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+            - emptyDir: {}
+              name: nextcloud-source
+            - name: nextcloud-data
+              persistentVolumeClaim:
+                claimName: nextcloud-data
+    schedule: '*/15 * * * *'
+    suspend: false

@@ -50,6 +50,12 @@ NEXTCLOUD_HOST=nextcloud.example.com
 oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST | oc -n $PROJECT create -f -
 ```
 
+Also register a cron job for regular background working:
+
+```[bash]
+oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud-cron.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST | oc -n $PROJECT create -f -
+```
+
 #### Template parameters
 
 Execute the following command to get the available parameters:

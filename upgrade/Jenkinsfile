@@ -101,13 +101,19 @@ pipeline {
                                 config = openshift.process(template,
                                   '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
                                   '-p', "NEXTCLOUD_IMAGESTREAM_NAME=nextcloud-fixed",
-                                  '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
+                                  '-p', "NEXTCLOUD_IMAGE_TAG=latest")
                             } else {
                                 config = openshift.process(template,
                                   '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
                                   '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                             }
                             openshift.apply(config)
+
+                            // The cron job will always be done with the unfixed image
+                            def cronConfig = openshift.process(template,
+                                  '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
+                                  '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
+                            openshift.apply(cronConfig)
 
                             def templateName = 'nextcloud'
                             /*def rm = openshift.selector("dc", templateName)
