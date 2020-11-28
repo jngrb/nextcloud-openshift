@@ -27,7 +27,7 @@ parameters:
   value: 17-fpm
 - name: BUILD_FIXED_IMAGE
   description: Care for the image with fixed permissions as described in section 'Redis Cache for Sessions without root privileges' of README.md
-  value: true
+  value: "true"
 objects:
 - apiVersion: v1
   kind: BuildConfig

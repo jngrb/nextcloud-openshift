@@ -79,7 +79,7 @@ pipeline {
                                     '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                                 openshift.apply(imageBuildConfig)
                                 def buildSelector = openshift.selector("bc", 'nextcloud-image')
-                                startBuild.startBuild("--follow=true")
+                                buildSelector.startBuild("--follow=true")
                                 /* Alternatively to "--follow=true":
                                  * Do some parallel tasks while building.
                                  * When needed to wait for the build again and show logs, do:
