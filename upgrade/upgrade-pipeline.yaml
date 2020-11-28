@@ -25,6 +25,9 @@ parameters:
 - name: NEW_NEXTCLOUD_IMAGE_TAG
   description: Tag of the Nextcloud Docker Image to upgrade to (major version can be incremented max by one)
   value: 17-fpm
+- name: BUILD_FIXED_IMAGE
+  description: Care for the image with fixed permissions as described in section 'Redis Cache for Sessions without root privileges' of README.md
+  value: true
 objects:
 - apiVersion: v1
   kind: BuildConfig
@@ -49,3 +52,5 @@ objects:
             value: "${OLD_NEXTCLOUD_IMAGE_TAG}"
           - name: NEW_NEXTCLOUD_IMAGE_TAG
             value: "${NEW_NEXTCLOUD_IMAGE_TAG}"
+          - name: BUILD_FIXED_IMAGE
+            value: "${BUILD_FIXED_IMAGE}"

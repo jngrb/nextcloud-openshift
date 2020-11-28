@@ -168,7 +168,7 @@ oc process -f nextcloud-maintenance.yaml -p ON_OFF=off | oc create -f -
 
 In order to upgrade the Nextcloud image and run the upgrade script automatically for the persistent data volume and the database, run the 'image-upgrade' pipeline.
 
-Note that just upgrading the image for the regular deployment cannot be recommended, especially when the replica count is greater than one. In such cases, the migration script of the Nextcloud iamge might run in several containers in parallel.
+Note that just upgrading the image for the regular deployment cannot be recommended, especially when the replica count is greater than one. In such cases, the migration script of the Nextcloud image might run in several containers in parallel.
 
 ```[bash]
 #oc project $PROJECT # assumed to still be set

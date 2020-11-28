@@ -16,6 +16,9 @@ parameters:
 - name: NEXTCLOUD_IMAGE
   description: Image to deploy
   value: docker.io/nextcloud
+- name: NEXTCLOUD_IMAGESTREAM_NAME
+  description: Name of the image stream for the nextcloud deployment
+  value: nextcloud
 - name: NEXTCLOUD_IMAGE_TAG
   description: Tag of the Nextcloud Docker Image to deploy
   value: 18.0.4-fpm
@@ -254,7 +257,7 @@ objects:
         - nextcloud
         from:
           kind: ImageStreamTag
-          name: nextcloud:${NEXTCLOUD_IMAGE_TAG}
+          name: ${NEXTCLOUD_IMAGESTREAM_NAME}:${NEXTCLOUD_IMAGE_TAG}
       type: ImageChange
     - imageChangeParams:
         automatic: true
@@ -338,7 +341,7 @@ objects:
                   secretKeyRef:
                     key: database-password
                     name: redis
-              image: nextcloud:${NEXTCLOUD_IMAGE_TAG}
+              image: ${NEXTCLOUD_IMAGESTREAM_NAME}:${NEXTCLOUD_IMAGE_TAG}
               imagePullPolicy: Always
               name: nextcloud-cron
               resources: {}

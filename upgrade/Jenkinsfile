@@ -66,15 +66,46 @@ pipeline {
                 }
             }
         }
+        stage('Build new fixed image (if requested)') {
+            /* If the permission fixed is requested, run the build job
+             * for the new image. */
+            steps {
+                script {
+                    if (env.BUILD_FIXED_IMAGE.toBoolean()) {
+                        openshift.withCluster() {
+                            openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
+                                def imageBuildTemplate = readFile 'nc_image_fix/nextcloud-image-fix.yaml'
+                                def imageBuildConfig = openshift.process(imageBuildTemplate,
+                                    '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
+                                openshift.apply(imageBuildConfig)
+                                def buildSelector = openshift.selector("bc", 'nextcloud-image')
+                                startBuild.startBuild("--follow=true")
+                                /* Alternatively to "--follow=true":
+                                 * Do some parallel tasks while building.
+                                 * When needed to wait for the build again and show logs, do:
+                                 * build.logs('-f') */
+                            }
+                        }
+                    }
+                }
+            }
+        }
         stage('Apply new image to deployment configuration') {
             steps {
                 script {
                     openshift.withCluster() {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
                             def template = readFile 'nextcloud.yaml'
-                            def config = openshift.process(template,
-                              '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
-                              '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
+                            if (env.BUILD_FIXED_IMAGE.toBoolean()) {
+                                def config = openshift.process(template,
+                                  '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
+                                  '-p', "NEXTCLOUD_IMAGESTREAM_NAME=nextcloud-fixed",
+                                  '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
+                            } else {
+                                def config = openshift.process(template,
+                                  '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
+                                  '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
+                            }
                             openshift.apply(config)
 
                             def templateName = 'nextcloud'
