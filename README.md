@@ -153,7 +153,7 @@ After having logged into Jenkins for the first time, you can roll out the Jenkin
 
 ```[bash]
 oc project $PROJECT
-oc process -f update-pipeline.yaml -p NEXTCLOUD_HOST=nextcloud.example.com | oc apply -f -
+oc process -f update-pipeline.yaml -p NEXTCLOUD_HOST=nextcloud.example.com -p NEXTCLOUD_IMAGE_TAG=18.0.4-fpm | oc apply -f -
 ```
 
 This pipeline updates the deployment configuration to the newest version from the template as checked in on the master branch on Github.
