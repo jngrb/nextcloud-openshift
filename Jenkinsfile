@@ -19,7 +19,7 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
-                            def buildSelector = openshift.selector("bc", 'nextcloud-image')
+                            def buildSelector = openshift.selector("bc", 'nginx')
                             buildSelector.startBuild("--follow=true")
                             /* Alternatively to "--follow=true":
                                  * Do some parallel tasks while building.
