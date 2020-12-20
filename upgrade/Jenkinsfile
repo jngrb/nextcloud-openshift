@@ -112,7 +112,6 @@ pipeline {
                             def cronTemplate = readFile 'nextcloud-cron.yaml'
                             // The cron job will always be done with the unfixed image
                             def cronConfig = openshift.process(cronTemplate,
-                                  '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
                                   '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                             openshift.apply(cronConfig)
 

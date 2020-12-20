@@ -53,7 +53,7 @@ oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master
 Also register a cron job for regular background working:
 
 ```[bash]
-oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud-cron.yaml -p NEXTCLOUD_HOST=$NEXTCLOUD_HOST | oc -n $PROJECT create -f -
+oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud-cron.yaml | oc -n $PROJECT create -f -
 ```
 
 #### Template parameters
