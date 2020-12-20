@@ -133,6 +133,10 @@ oc exec NEXTCLOUDPOD -c nextcloud -ti php occ
 
 ## Automatic update and upgrade deployments
 
+### Check whether nginx.conf is up to date
+
+Before upgrading to a new major version, check that the `nginx.conf` is up to date with the latest recommendations from the Nextcloud team: <https://docs.nextcloud.com/server/latest/admin_manual/installation/nginx.html>.
+
 ### Jenkins pipeline
 
 We use an (ephemeral) Jenkins for automatic deployments of configuration updates and image upgrades. First, deploy the Jekins POD:
