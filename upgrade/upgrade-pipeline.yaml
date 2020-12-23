@@ -28,6 +28,9 @@ parameters:
 - name: BUILD_FIXED_IMAGE
   description: Care for the image with fixed permissions as described in section 'Redis Cache for Sessions without root privileges' of README.md
   value: "true"
+- name: PVC_SIZE
+  description: PVC size for Apps, Config and Data
+  value: 20Gi
 objects:
 - apiVersion: v1
   kind: BuildConfig
@@ -54,3 +57,5 @@ objects:
             value: "${NEW_NEXTCLOUD_IMAGE_TAG}"
           - name: BUILD_FIXED_IMAGE
             value: "${BUILD_FIXED_IMAGE}"
+          - name: PVC_SIZE
+            value: "${PVC_SIZE}"

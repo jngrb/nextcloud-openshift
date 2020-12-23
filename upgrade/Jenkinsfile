@@ -99,11 +99,13 @@ pipeline {
                             def config = null
                             if (env.BUILD_FIXED_IMAGE.toBoolean()) {
                                 config = openshift.process(template,
+                                  '-p', "PVC_SIZE=${env.PVC_SIZE}",
                                   '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
                                   '-p', "NEXTCLOUD_IMAGESTREAM_NAME=nextcloud-fixed",
                                   '-p', "NEXTCLOUD_IMAGE_TAG=latest")
                             } else {
                                 config = openshift.process(template,
+                                  '-p', "PVC_SIZE=${env.PVC_SIZE}",
                                   '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
                                   '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEW_NEXTCLOUD_IMAGE_TAG}")
                             }
