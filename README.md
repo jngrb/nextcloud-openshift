@@ -56,6 +56,22 @@ Also register a cron job for regular background working:
 oc process -f https://raw.githubusercontent.com/jngrb/nextcloud-openshift/master/nextcloud-cron.yaml | oc -n $PROJECT create -f -
 ```
 
+## Tweak php-fpm
+The OpenShift template automatically created a ConfigMap `fpm-confd` where you can set the php-fpm pool config. **Note:** You must restart the pod(s) to take the changes into effect.
+
+```[bash]
+[www]
+pm = dynamic
+pm.max_children = 120
+pm.start_servers = 12
+pm.min_spare_servers = 6
+pm.max_spare_servers = 18
+```
+
+```[bash]
+oc rollout latest dc/nextcloud
+```
+
 #### Template parameters
 
 Execute the following command to get the available parameters:
