@@ -203,6 +203,10 @@ objects:
           - mountPath: /var/www/html/custom_apps
             name: nextcloud-data
             subPath: apps
+          - mountPath: /usr/local/etc/php-fpm.d/www.overloaded.conf
+            name: fpm-confd
+            subPath: www.overloaded.conf
+            readOnly: true
         - image: nginx
           imagePullPolicy: Always
           livenessProbe:
@@ -249,6 +253,9 @@ objects:
         - name: nextcloud-data
           persistentVolumeClaim:
             claimName: nextcloud-data
+        - name: fpm-confd
+          configMap:
+            name: fpm-confd
     test: false
     triggers:
     - imageChangeParams:
@@ -301,3 +308,15 @@ objects:
       name: nextcloud
       weight: 100
     wildcardPolicy: None
+- apiVersion: v1
+  kind: ConfigMap
+  data:
+    www.overloaded.conf: |-
+        ;[www]
+        ;pm = dynamic
+        ;pm.max_children = 120
+        ;pm.start_servers = 12
+        ;pm.min_spare_servers = 6
+        ;pm.max_spare_servers = 18
+  metadata:
+    name: fpm-confd
