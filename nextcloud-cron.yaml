@@ -93,5 +93,5 @@ objects:
             - name: nextcloud-data
               persistentVolumeClaim:
                 claimName: nextcloud-data
-    schedule: '*/15 * * * *'
+    schedule: '*/5 * * * *'
     suspend: false
