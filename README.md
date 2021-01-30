@@ -158,17 +158,21 @@ Before upgrading to a new major version, check that the `nginx.conf` is up to da
 We use an (ephemeral) Jenkins for automatic deployments of configuration updates and image upgrades. First, deploy the Jekins POD:
 
 ```[bash]
-oc -n openshift process jenkins-ephemeral | oc -n $PROJECT create -f -
+oc project $PROJECT
+oc -n openshift process jenkins-ephemeral | oc create -f -
 ```
 
 As as the main PODs, you might want to deploy the Jenkins container only on selected nodes. (E.g., you can the same node selector, 'appclass=main'.)
+
+```[bash]
+oc patch dc jenkins --patch='{"spec":{"template":{"spec":{"nodeSelector":{"appclass":"main"}}}}}'
+```
 
 Note, Jenkins might take a long time to deploy.
 
 After having logged into Jenkins for the first time, you can roll out the JenkinsPipeline build configuration:
 
 ```[bash]
-oc project $PROJECT
 oc process -f update-pipeline.yaml -p NEXTCLOUD_HOST=nextcloud.example.com -p NEXTCLOUD_IMAGE_TAG=18.0.4-fpm | oc apply -f -
 ```
 
