@@ -28,6 +28,9 @@ parameters:
 - name: PVC_SIZE
   description: PVC size for Apps, Config and Data
   value: 20Gi
+- name: REPLICAS
+  description: Number of Nextcloud replicas
+  value: 1
 objects:
 - apiVersion: v1
   kind: BuildConfig
@@ -54,3 +57,5 @@ objects:
             value: "${BUILD_FIXED_IMAGE}"
           - name: PVC_SIZE
             value: "${PVC_SIZE}"
+          - name: REPLICAS
+            value: "${REPLICAS}"

@@ -37,6 +37,9 @@ parameters:
 - name: PVC_SIZE
   description: PVC size for Apps, Config and Data
   value: 20Gi
+- name: REPLICAS
+  description: Number of Nextcloud replicas
+  value: 1
 objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -122,7 +125,7 @@ objects:
       app: nextcloud
     name: nextcloud
   spec:
-    replicas: 1
+    replicas: ${REPLICAS}
     selector:
       app: nextcloud
       deploymentconfig: nextcloud
