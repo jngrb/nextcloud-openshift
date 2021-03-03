@@ -125,7 +125,7 @@ objects:
       app: nextcloud
     name: nextcloud
   spec:
-    replicas: ${REPLICAS}
+    replicas: ${{REPLICAS}}
     selector:
       app: nextcloud
       deploymentconfig: nextcloud
