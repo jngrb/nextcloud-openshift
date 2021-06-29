@@ -71,7 +71,7 @@ pipeline {
 
                             if (env.BUILD_FIXED_IMAGE.toBoolean()) {
                                 args += ['-p', "NEXTCLOUD_IMAGESTREAM_NAME=nextcloud-fixed",
-                                  '-p', "NEXTCLOUD_IMAGE_TAG=latest"])
+                                  '-p', "NEXTCLOUD_IMAGE_TAG=latest"]
                             } else {
                                 args += ['-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}"]
                             }
