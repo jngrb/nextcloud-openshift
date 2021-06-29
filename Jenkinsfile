@@ -14,42 +14,42 @@ pipeline {
                     userRemoteConfigs: [[url: "${env.GIT_URL}"]]]
             }
         }
-        stage('Rebuild fixed nextcloud image') {
-            steps {
-                script {
-                    if (env.BUILD_FIXED_IMAGE.toBoolean()) {
-                        // consider changes in nc_image_fix/Dockerfile
-                        openshift.withCluster() {
-                            openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
-                                def buildSelector = openshift.selector("bc", 'nextcloud-image')
-                                buildSelector.startBuild("--follow=true")
-                                /* Alternatively to "--follow=true":
-                                    * Do some parallel tasks while building.
-                                    * When needed to wait for the build again and show logs, do:
-                                    * build.logs('-f') */
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        stage('Rebuild nginx image') {
-            steps {
-                script {
-                    // consider changes in Dockerfile and nginx.conf
-                    openshift.withCluster() {
-                        openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
-                            def buildSelector = openshift.selector("bc", 'nginx')
-                            buildSelector.startBuild("--follow=true")
-                            /* Alternatively to "--follow=true":
-                                 * Do some parallel tasks while building.
-                                 * When needed to wait for the build again and show logs, do:
-                                 * build.logs('-f') */
-                        }
-                    }
-                }
-            }
-        }
+        // stage('Rebuild fixed nextcloud image') {
+        //     steps {
+        //         script {
+        //             if (env.BUILD_FIXED_IMAGE.toBoolean()) {
+        //                 // consider changes in nc_image_fix/Dockerfile
+        //                 openshift.withCluster() {
+        //                     openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
+        //                         def buildSelector = openshift.selector("bc", 'nextcloud-image')
+        //                         buildSelector.startBuild("--follow=true")
+        //                         /* Alternatively to "--follow=true":
+        //                             * Do some parallel tasks while building.
+        //                             * When needed to wait for the build again and show logs, do:
+        //                             * build.logs('-f') */
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Rebuild nginx image') {
+        //     steps {
+        //         script {
+        //             // consider changes in Dockerfile and nginx.conf
+        //             openshift.withCluster() {
+        //                 openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
+        //                     def buildSelector = openshift.selector("bc", 'nginx')
+        //                     buildSelector.startBuild("--follow=true")
+        //                     /* Alternatively to "--follow=true":
+        //                          * Do some parallel tasks while building.
+        //                          * When needed to wait for the build again and show logs, do:
+        //                          * build.logs('-f') */
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         stage('Apply configuration update') {
             steps {
                 script {
@@ -61,7 +61,7 @@ pipeline {
                                 '-p', "REPLICAS=${env.REPLICAS}",
                                 '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}"]
 
-                            def existing_fpm_cm = openshift.selector("cm", fpm-confd).object()
+                            def existing_fpm_cm = openshift.selector("cm", "fpm-confd").object()
                             print existing_fpm_cm
                             print existing_fpm_cm.data
                             print existing_fpm_cm.data["www.overloaded.conf"]
