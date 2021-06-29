@@ -66,7 +66,7 @@ pipeline {
                             print existing_fpm_cm.data
                             print existing_fpm_cm.data["www.overloaded.conf"]
                             if (existing_fpm_cm.data["www.overloaded.conf"]) {
-                                args += ['-p', "FPM_PARAMETERS=" + existing_fpm_cm.data["www.overloaded.conf"])
+                                args += ['-p', "FPM_PARAMETERS=" + existing_fpm_cm.data["www.overloaded.conf"]])
                             }
 
                             if (env.BUILD_FIXED_IMAGE.toBoolean()) {
