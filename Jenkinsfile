@@ -57,21 +57,22 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject(/*"${env.PROJECT_NAME}"*/) {
                             def template = readFile 'nextcloud.yaml'
-                            def config = null
-                            if (env.BUILD_FIXED_IMAGE.toBoolean()) {
-                                config = openshift.process(template,
-                                  '-p', "PVC_SIZE=${env.PVC_SIZE}",
-                                  '-p', "REPLICAS=${env.REPLICAS}",
-                                  '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
-                                  '-p', "NEXTCLOUD_IMAGESTREAM_NAME=nextcloud-fixed",
-                                  '-p', "NEXTCLOUD_IMAGE_TAG=latest")
-                            } else {
-                                config = openshift.process(template,
-                                  '-p', "PVC_SIZE=${env.PVC_SIZE}",
-                                  '-p', "REPLICAS=${env.REPLICAS}",
-                                  '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}",
-                                  '-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}")
+                            def args = ['-p', "PVC_SIZE=${env.PVC_SIZE}",
+                                '-p', "REPLICAS=${env.REPLICAS}",
+                                '-p', "NEXTCLOUD_HOST=${env.NEXTCLOUD_HOST}"]
+
+                            def existing_fpm_cm = openshift.selector("cm", "fpm-confd").object()
+                            if (existing_fpm_cm.data["www.overloaded.conf"]) {
+                                args += ['-p', "FPM_PARAMETERS=" + existing_fpm_cm.data["www.overloaded.conf"]]
                             }
+
+                            if (env.BUILD_FIXED_IMAGE.toBoolean()) {
+                                args += ['-p', "NEXTCLOUD_IMAGESTREAM_NAME=nextcloud-fixed",
+                                  '-p', "NEXTCLOUD_IMAGE_TAG=latest"]
+                            } else {
+                                args += ['-p', "NEXTCLOUD_IMAGE_TAG=${env.NEXTCLOUD_IMAGE_TAG}"]
+                            }
+                            def config = openshift.process(template, args)
                             openshift.apply(config)
 
                             def cronTemplate = readFile 'nextcloud-cron.yaml'
