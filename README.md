@@ -147,6 +147,37 @@ oc get pods
 oc exec NEXTCLOUDPOD -c nextcloud -ti php occ
 ```
 
+## Changes to the FPM configuration
+
+In the config map `fpm-confd`, you can change the FPM configuration. To do this, uncomment the settings and specify suitabled values:
+
+```[ini]
+[www]
+pm = dynamic
+pm.max_children = 120
+pm.start_servers = 12
+pm.min_spare_servers = 6
+pm.max_spare_servers = 18
+```
+
+References:
+
+* <https://github.com/nextcloud/docker/issues/182#issuecomment-430531984>
+* <https://github.com/nextcloud/docker/issues/1080#issuecomment-639842439>
+* <https://tideways.com/profiler/blog/an-introduction-to-php-fpm-tuning>
+* <https://www.kinamo.be/en/support/faq/determining-the-correct-number-of-child-processes-for-php-fpm-on-nginx>
+* <https://www.technik-blog.eu/2018/08/php-fpm-einstellungen-optimieren.html>
+
+### Update using the existing FPM configuration
+
+You can update the Nextcloud deployment keeping the existing config map for the FPM configuration as follows:
+
+```[bash]
+oc process -o yaml -f nextcloud.yaml -p "FPM_PARAMETERS=$(oc get cm/fpm-confd -o json | jq -r '.data["www.overloaded.conf"]')" -p NEXTCLOUD_HOST=...
+```
+
+This requires the tool `jq` to be installed.
+
 ## Automatic update and upgrade deployments
 
 ### Check whether nginx.conf is up to date
