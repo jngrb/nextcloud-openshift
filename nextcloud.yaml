@@ -106,7 +106,8 @@ objects:
       app: nextcloud
     name: nginx
   spec:
-    nodeSelector: null
+    nodeSelector:
+      dockerbuild: true
     output:
       to:
         kind: ImageStreamTag

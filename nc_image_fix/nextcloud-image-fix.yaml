@@ -43,7 +43,8 @@ objects:
       app: nextcloud
     name: nextcloud-image
   spec:
-    nodeSelector: null
+    nodeSelector:
+      dockerbuild: true
     output:
       to:
         kind: ImageStreamTag
