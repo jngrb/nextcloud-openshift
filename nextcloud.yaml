@@ -107,7 +107,7 @@ objects:
     name: nginx
   spec:
     nodeSelector:
-      dockerbuild: true
+      dockerbuild: 'true'
     output:
       to:
         kind: ImageStreamTag
